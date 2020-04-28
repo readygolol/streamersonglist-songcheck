@@ -1,0 +1,42 @@
+function doGet(e) {
+    var streamer = e.parameters.streamer;
+    var content = "https://api.streamersonglist.com/v1/streamers/" + streamer.toString() + "/songs";
+    var result = JSON.parse(UrlFetchApp.fetch(content).getContentText());
+    var newResult = result.items;
+    var findResult;
+    var searchList = [];
+    var searchField = "title";
+    var searchVal = e.parameters.title;
+
+    if (searchVal == "") {
+        findResult = ("你沒輸入歌名阿!");
+    } else {
+        //找相符字
+        for (var i = 0; i < newResult.length; i++) {
+            if (newResult[i][searchField].match(searchVal) != null) {
+                searchList.push(newResult[i]);
+            }
+        }
+
+        //輸出"歌名 - 歌手"
+        var findstr = [];
+        for (var i = 0; i < searchList.length; i++) {
+            findstr.push(searchList[i].title + " - " + searchList[i].artist);
+        }
+
+        if (findstr.length > "5") {
+            findResult = ("太多東西了,我懶得跟你說!");
+        }
+        else if (findstr.length > "1") {
+            findResult = ("你想找哪一首? > " + findstr.toString());
+        }
+        else if (findstr.length == "1") {
+            findResult = ("你是不是想找? > " + findstr.toString());
+        }
+        else if (findstr.length == "0") {
+            findResult = ("找不到這首歌哦!");
+        }
+    }
+    return ContentService
+        .createTextOutput(findResult);
+}
