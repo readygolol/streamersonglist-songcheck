@@ -1,15 +1,15 @@
 function doGet(e) {
-    var streamer = e.parameters.streamer;
+    var streamer = e.parameters.streamer
     var content = "https://api.streamersonglist.com/v1/streamers/" + streamer.toString() + "/songs";
     var result = JSON.parse(UrlFetchApp.fetch(content).getContentText());
-    var newResult = result.items;
-    var findResult;
+    var newResult = result.items
+    var findResult
     var searchList = [];
     var searchField = "title";
     var searchVal = e.parameters.title;
 
     if (searchVal == "") {
-        findResult = ("你沒輸入歌名阿!");
+        findResult = ("你還沒輸入歌名阿!")
     } else {
         //找相符字
         for (var i = 0; i < newResult.length; i++) {
@@ -21,22 +21,28 @@ function doGet(e) {
         //輸出"歌名 - 歌手"
         var findstr = [];
         for (var i = 0; i < searchList.length; i++) {
-            findstr.push(searchList[i].title + " - " + searchList[i].artist);
+            findstr.push(searchList[i].title + " - " + searchList[i].artist)
         }
 
+        //亂數排序
+        function randomSort(a, b) {
+            return Math.random() > 0.5 ? -1 : 1;
+        }  
+          
         if (findstr.length > "5") {
-            findResult = ("太多東西了,我懶得跟你說!");
+        findstr.sort(randomSort)
+            findResult = ("太多歌了,猜你想找 > " + findstr.slice(0,4).toString())
         }
         else if (findstr.length > "1") {
-            findResult = ("你想找哪一首? > " + findstr.toString());
+            findResult = ("你想找哪一首呢? > " + findstr.toString())
         }
         else if (findstr.length == "1") {
-            findResult = ("你是不是想找? > " + findstr.toString());
+            findResult = ("你是不是想找? > " + findstr.toString())
         }
         else if (findstr.length == "0") {
-            findResult = ("找不到這首歌哦!");
+            findResult = ("找不到這首歌哦!")
         }
     }
     return ContentService
-        .createTextOutput(findResult);
+        .createTextOutput(findResult)
 }
